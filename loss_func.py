@@ -58,6 +58,23 @@ def nce_loss(inputs, weights, biases, labels, sample, unigram_prob):
 
     ==========================================================================
     """
+    """
+    we find outer words by using nce_weights and labels and similarly create noise words by using nce_weights and samples
+    Next we compute score of outer words and noise words which is multiplcation of transpose of above found matrices with input matrix.
+    we find negative bias by using biases and samples and outer word bias  using biases and labels this is done to make the shape
+    compatible so that addition of above found values can be done.
+
+    We convert the unigram_prob list given to us in to a tensor and use tf.gather to find the probability of negative words using
+    samples  and probability of true outer word using labels.
+
+    we then use the above found values to compute the formulas of provided pdf as follows
+    first_term =tf.subtract(U_score, tf.log(tf.scalar_mul(k,P_o)+1e-10))
+    second_term = tf.subtract(N_score,tf.log(tf.scalar_mul(k,P_n)+1e-10))
+    we pass this terms to sigmoid function and find A as log of value obtained by passing first term to sigmoid.
+    We take reduce sum of value obtained by passing second term to sigmoid. this adds all columns.
+    We take log of this reduce subtracted from 1 to create B
+    we pass A+B and put minus side outside the reduce sum in word2vec_basic file from where this function was called.
+    """
     u_o=tf.nn.embedding_lookup(weights, labels)
 
     shape1 = weights.shape
