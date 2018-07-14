@@ -20,6 +20,14 @@ def cross_entropy_loss(inputs, true_w):
 
     ==========================================================================
     """
+    """
+    we take transpose of the embeddings and perform matrix multiplication with inputs
+    softmax_numerator is nothing but exponential of this multiplication
+    we perfom resum on axis 1 on softmax_numerator which adds cloumns of the softmax_numerator to produce softmax_denominator
+    log of softmax_denominator is our B. Note we have added 1e-10 in log to avoid log(0) condition.
+    log of softmax_numerator is our A. Note we have added 1e-10 in log to avoid log(0) condition.
+    we return tf.subtract(B,A) which subtracts each element of A from B.
+    """
 
 
     true_w_transpose=tf.transpose(true_w) #transpose of embeddings
@@ -31,7 +39,7 @@ def cross_entropy_loss(inputs, true_w):
     A=tf.log(softmax_numerator + 1e-10 )
     B=tf.log(softmax_denominator + 1e-10 )
 
-    
+
 
     return tf.subtract(B,A)
 
